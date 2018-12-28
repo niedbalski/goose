@@ -194,7 +194,7 @@ type AgentList struct {
 func (c *Client) ListAgentsV2() ([]Agent, error) {
 	var resp AgentList
 	requestData := goosehttp.RequestData{RespValue: &resp}
-	err := c.client.SendRequest(client.GET, "network", "v2.0", apiAgentsV2, &requestData)
+	err := c.client.SendRequest(client.GET, "network", "v2.0", ApiAgentsV2, &requestData)
 	if err != nil {
 		return nil, errors.Newf(err, "failed to get subnet detail")
 	}
