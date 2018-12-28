@@ -1209,6 +1209,21 @@ func (n *Nova) handleNetworks(w http.ResponseWriter, r *http.Request) error {
 	return fmt.Errorf("unknown request method %q for %s", r.Method, r.URL.Path)
 }
 
+// handleHypervisors handles the os-hypervisors/detail HTTP API
+func (n *Nova) handleHypervisors(w http.ResponseWriter, r *http.Request) error {
+	hypervisors := n.AllHypervisors()
+
+	if len(hypervisors.Hypervisors) == 0 {
+		return errNotFoundJSON
+	}
+
+	resp := struct {
+		Hypervisors []nova.Hypervisor `json:"hypervisors"`
+	}{Hypervisors: hypervisors.Hypervisors}
+
+	return sendJSON(http.StatusOK, resp, w, r)
+}
+
 // handleAvailabilityZones handles the os-availability-zone HTTP API.
 func (n *Nova) handleAvailabilityZones(w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -1334,14 +1349,16 @@ func (n *Nova) handleListVolumes(w http.ResponseWriter, r *http.Request) error {
 // SetupHTTP attaches all the needed handlers to provide the HTTP API.
 func (n *Nova) SetupHTTP(mux *http.ServeMux) {
 	handlers := map[string]http.Handler{
-		"/$v/":                        errBadRequest,
-		"/$v/$t/":                     errNotFound,
-		"/$v/$t/flavors":              n.handler((*Nova).handleFlavors),
-		"/$v/$t/flavors/detail":       n.handler((*Nova).handleFlavorsDetail),
-		"/$v/$t/servers":              n.handler((*Nova).handleServers),
-		"/$v/$t/servers/detail":       n.handler((*Nova).handleServersDetail),
-		"/$v/$t/os-availability-zone": n.handler((*Nova).handleAvailabilityZones),
+		"/$v/":                         errBadRequest,
+		"/$v/$t/":                      errNotFound,
+		"/$v/$t/flavors":               n.handler((*Nova).handleFlavors),
+		"/$v/$t/flavors/detail":        n.handler((*Nova).handleFlavorsDetail),
+		"/$v/$t/servers":               n.handler((*Nova).handleServers),
+		"/$v/$t/servers/detail":        n.handler((*Nova).handleServersDetail),
+		"/$v/$t/os-availability-zone":  n.handler((*Nova).handleAvailabilityZones),
+		"/$v/$t/os-hypervisors/detail": n.handler((*Nova).handleHypervisors),
 	}
+
 	if !n.useNeutronNetworking {
 		handlers["/$v/$t/os-security-groups"] = n.handler((*Nova).handleSecurityGroups)
 		handlers["/$v/$t/os-security-group-rules"] = n.handler((*Nova).handleSecurityGroupRules)

@@ -155,6 +155,11 @@ func (s *LiveTests) TestListFlavorsDetail(c *gc.C) {
 	}
 }
 
+func (s *LiveTests) TestListHypervisors(c *gc.C) {
+	hypervisors, err := s.nova.ListHypervisors()
+	c.Assert(err, gc.IsNil)
+}
+
 func (s *LiveTests) TestListServers(c *gc.C) {
 	servers, err := s.nova.ListServers(nil)
 	c.Assert(err, gc.IsNil)

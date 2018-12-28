@@ -874,6 +874,57 @@ type GetSnapshotParams struct {
 	SnapshotId string `json:"-"`
 }
 
+// Service list
+
+type Service struct {
+	Status            string      `json:"status"`
+	Binary            string      `json:"binary"`
+	Zone              string      `json:"zone"`
+	State             string      `json:"state"`
+	UpdatedAt         string      `json:"updated_at"`
+	Host              string      `json:"host"`
+	DisabledReason    interface{} `json:"disabled_reason"`
+	Frozen            bool        `json:"frozen,omitempty"`
+	Cluster           interface{} `json:"cluster,omitempty"`
+	ReplicationStatus string      `json:"replication_status,omitempty"`
+	ActiveBackendID   interface{} `json:"active_backend_id,omitempty"`
+}
+
+type GetServicesResults struct {
+	Services []Service `json:"services"`
+}
+
+func getServiceList(c *Client) (*GetServicesResults, error) {
+	urlPath := url.URL{Path: "os-services"}
+	url := c.endpoint.ResolveReference(&urlPath).String()
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.handleRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	switch resp.StatusCode {
+	default:
+		return nil, fmt.Errorf("invalid status (%d): %s", resp.StatusCode, body)
+	case 200:
+		break
+	}
+
+	var results GetServicesResults
+	json.Unmarshal(body, &results)
+
+	return &results, nil
+}
+
 type GetSnapshotResults struct {
 	Snapshot Snapshot `json:"snapshot"`
 }

@@ -19,6 +19,7 @@ const (
 	ApiSubnetsV2            = "subnets"
 	ApiSecurityGroupsV2     = "security-groups"
 	ApiSecurityGroupRulesV2 = "security-group-rules"
+	ApiAgentsV2             = "agents"
 )
 
 // Filter keys for Networks.
@@ -149,6 +150,55 @@ func (c *Client) GetSubnetV2(subnetID string) (*SubnetV2, error) {
 		return nil, errors.Newf(err, "failed to get subnet detail")
 	}
 	return &resp.Subnet, nil
+}
+
+type Agent struct {
+	Binary             string      `json:"binary"`
+	Description        interface{} `json:"description"`
+	AvailabilityZone   interface{} `json:"availability_zone"`
+	HeartbeatTimestamp string      `json:"heartbeat_timestamp"`
+	AdminStateUp       bool        `json:"admin_state_up"`
+	Alive              bool        `json:"alive"`
+	ID                 string      `json:"id"`
+	Topic              string      `json:"topic"`
+	Host               string      `json:"host"`
+	AgentType          string      `json:"agent_type"`
+	StartedAt          string      `json:"started_at"`
+	CreatedAt          string      `json:"created_at"`
+	Configurations     struct {
+		OvsHybridPlug       bool   `json:"ovs_hybrid_plug"`
+		InDistributedMode   bool   `json:"in_distributed_mode"`
+		DatapathType        string `json:"datapath_type"`
+		VhostuserSocketDir  string `json:"vhostuser_socket_dir"`
+		TunnelingIP         string `json:"tunneling_ip"`
+		ArpResponderEnabled bool   `json:"arp_responder_enabled"`
+		Devices             int    `json:"devices"`
+		OvsCapabilities     struct {
+			DatapathTypes []string `json:"datapath_types"`
+			IfaceTypes    []string `json:"iface_types"`
+		} `json:"ovs_capabilities"`
+		LogAgentHeartbeats       bool          `json:"log_agent_heartbeats"`
+		L2Population             bool          `json:"l2_population"`
+		TunnelTypes              []string      `json:"tunnel_types"`
+		Extensions               []interface{} `json:"extensions"`
+		EnableDistributedRouting bool          `json:"enable_distributed_routing"`
+		BridgeMappings           struct {
+			Public string `json:"public"`
+		} `json:"bridge_mappings"`
+	} `json:"configurations"`
+}
+type AgentList struct {
+	Agents []Agent `json:"agents"`
+}
+
+func (c *Client) ListAgentsV2() ([]Agent, error) {
+	var resp AgentList
+	requestData := goosehttp.RequestData{RespValue: &resp}
+	err := c.client.SendRequest(client.GET, "network", "v2.0", apiAgentsV2, &requestData)
+	if err != nil {
+		return nil, errors.Newf(err, "failed to get subnet detail")
+	}
+	return resp.Agents, nil
 }
 
 // FloatingIPV2 contains details about a floating ip

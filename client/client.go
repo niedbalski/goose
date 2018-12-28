@@ -514,8 +514,8 @@ func (c *authenticatingClient) doAuthenticate() error {
 	}
 	logger := logging.FromCompat(c.logger)
 	logger.Debugf("auth details: %+v", authDetails)
-
 	c.regionServiceURLs = authDetails.RegionServiceURLs
+
 	if err := c.createServiceURLs(); err != nil {
 		return gooseerrors.Newf(err, "cannot create service URLs")
 	}

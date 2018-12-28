@@ -34,6 +34,7 @@ type Nova struct {
 	serverIPs                 map[string][]string
 	availabilityZones         map[string]nova.AvailabilityZone
 	serverIdToAttachedVolumes map[string][]nova.VolumeAttachment
+	hypervisors 			  []nova.Hypervisor
 	nextServerId              int
 	nextGroupId               int
 	nextRuleId                int
@@ -1079,6 +1080,15 @@ func (n *Nova) network(name string) (*nova.Network, error) {
 		return &net, err
 	}
 }
+
+// AllHypervisors returns a list of all existing hypervisors,
+func (n *Nova) AllHypervisors() (hypervisors nova.HypervisorsList) {
+	for _, hypervisor := range n.hypervisors {
+		hypervisors.Hypervisors = append(hypervisors.Hypervisors, hypervisor)
+	}
+	return hypervisors
+}
+
 
 // allAvailabilityZones returns a list of all existing availability zones,
 // sorted by name.

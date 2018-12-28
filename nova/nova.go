@@ -25,6 +25,8 @@ const (
 	apiFloatingIPs        = "os-floating-ips"
 	apiAvailabilityZone   = "os-availability-zone"
 	apiVolumeAttachments  = "os-volume_attachments"
+	apiHypervisors	      = "os-hypervisors/detail"
+	apiServices           = "os-services"
 )
 
 // Server status values.
@@ -197,6 +199,92 @@ func (c *Client) ListServers(filter *Filter) ([]Entity, error) {
 		return nil, errors.Newf(err, "failed to get list of servers")
 	}
 	return resp.Servers, nil
+}
+
+type Hypervisor struct {
+	//CPUInfo string `json:"cpu_info,omitempty"`
+	//	Arch     string   `json:"arch,omitempty"`
+	//	Model    string   `json:"model,omitempty"`
+	//	Vendor   string   `json:"vendor,omitempty"`
+	//	Features []string `json:"features,omitempty"`
+	//	Topology struct {
+	//		Cores   int `json:"cores"`
+	//		Threads int `json:"threads"`
+	//		Sockets int `json:"sockets"`
+	//	} `json:"topology"`
+	//} `json:"cpu_info,omitempty"`
+	CurrentWorkload    int    `json:"current_workload"`
+	Status             string `json:"status"`
+	State              string `json:"state"`
+	DiskAvailableLeast int    `json:"disk_available_least"`
+	HostIP             string `json:"host_ip"`
+	FreeDiskGb         int    `json:"free_disk_gb"`
+	FreeRAMMb          int    `json:"free_ram_mb"`
+	HypervisorHostname string `json:"hypervisor_hostname"`
+	HypervisorType     string `json:"hypervisor_type"`
+	HypervisorVersion  int    `json:"hypervisor_version"`
+	ID                 int `json:"id"`
+	LocalGb            int    `json:"local_gb"`
+	LocalGbUsed        int    `json:"local_gb_used"`
+	MemoryMb           int    `json:"memory_mb"`
+	MemoryMbUsed       int    `json:"memory_mb_used"`
+	RunningVms         int    `json:"running_vms"`
+	Service            struct {
+		Host           string      `json:"host"`
+		ID             int      `json:"id"`
+		DisabledReason interface{} `json:"disabled_reason"`
+	} `json:"service"`
+	Vcpus     int `json:"vcpus"`
+	VcpusUsed int `json:"vcpus_used"`
+}
+
+type HypervisorLink struct {
+	Href string `json:"href"`
+	Rel  string `json:"rel"`
+}
+
+type HypervisorsList struct {
+	Hypervisors []Hypervisor `json:"hypervisors"`
+	HypervisorsLinks []HypervisorLink `json:"hypervisors_links"`
+}
+// List Hypervisors
+func (c *Client) ListHypervisors() ([]Hypervisor, error) {
+	var response HypervisorsList
+
+	requestData := goosehttp.RequestData{RespValue: &response}
+	err := c.client.SendRequest(client.GET, "compute", "v2", apiHypervisors, &requestData)
+	if err != nil {
+		return nil, errors.Newf(err, "failed to get list of hypervisors")
+	}
+
+	return response.Hypervisors, nil
+}
+
+type Service struct {
+	Binary         string `json:"binary"`
+	DisabledReason string `json:"disabled_reason"`
+	ForcedDown     bool   `json:"forced_down"`
+	Host           string `json:"host"`
+	ID             int `json:"id"`
+	State          string `json:"state"`
+	Status         string `json:"status"`
+	UpdatedAt      string `json:"updated_at"`
+	Zone           string `json:"zone"`
+}
+
+type ServicesList struct {
+	Services []Service `json:"services"`
+}
+
+// List OS Services
+func (c *Client) ListServices() ([]Service, error) {
+	var response ServicesList
+	requestData := goosehttp.RequestData{RespValue: &response}
+	err := c.client.SendRequest(client.GET, "compute", "v2.1", apiServices, &requestData)
+	if err != nil {
+		return nil, errors.Newf(err, "failed to get list of services")
+	}
+	return response.Services, nil
 }
 
 // IPAddress describes a single IPv4/6 address of a server.

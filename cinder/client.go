@@ -90,6 +90,11 @@ func (c *Client) handleRequest(req *http.Request) (*http.Response, error) {
 	return c.client.Do(req)
 }
 
+
+func (c *Client) GetServices()(*GetServicesResults, error) {
+	return getServiceList(c)
+}
+
 // GetSnapshot shows information for a specified snapshot.
 func (c *Client) GetSnapshot(snapshotId string) (*GetSnapshotResults, error) {
 	return getSnapshot(
