@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"time"
 
-	goosehttp "gopkg.in/goose.v2/http"
+	goosehttp "gopkg.in/niedbalski/goose.v3/http"
 )
 
 // Basic returns a basic Cinder client which will handle authorization

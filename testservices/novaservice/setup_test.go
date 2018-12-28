@@ -5,7 +5,7 @@ import (
 
 	gc "gopkg.in/check.v1"
 
-	"gopkg.in/goose.v2/nova"
+	"gopkg.in/niedbalski/goose.v3/nova"
 )
 
 func Test(t *testing.T) {

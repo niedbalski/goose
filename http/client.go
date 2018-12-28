@@ -17,8 +17,8 @@ import (
 	"time"
 
 	"gopkg.in/goose.v2"
-	"gopkg.in/goose.v2/errors"
-	"gopkg.in/goose.v2/logging"
+	"gopkg.in/niedbalski/goose.v3/errors"
+	"gopkg.in/niedbalski/goose.v3/logging"
 )
 
 const (

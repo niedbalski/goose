@@ -10,8 +10,8 @@ import (
 	"time"
 
 	gc "gopkg.in/check.v1"
-	"gopkg.in/goose.v2/client"
-	"gopkg.in/goose.v2/identity"
+	"gopkg.in/niedbalski/goose.v3/client"
+	"gopkg.in/niedbalski/goose.v3/identity"
 )
 
 var _ = gc.Suite(&liveCinderSuite{})

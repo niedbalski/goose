@@ -6,9 +6,9 @@ package neutron
 
 import (
 	"fmt"
-	"gopkg.in/goose.v2/client"
-	"gopkg.in/goose.v2/errors"
-	goosehttp "gopkg.in/goose.v2/http"
+	"gopkg.in/niedbalski/goose.v3/client"
+	"gopkg.in/niedbalski/goose.v3/errors"
+	goosehttp "gopkg.in/niedbalski/goose.v3/http"
 	"net/http"
 	"net/url"
 )

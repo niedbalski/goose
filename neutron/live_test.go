@@ -4,9 +4,9 @@ import (
 	gc "gopkg.in/check.v1"
 	"net"
 
-	"gopkg.in/goose.v2/client"
-	"gopkg.in/goose.v2/identity"
-	"gopkg.in/goose.v2/neutron"
+	"gopkg.in/niedbalski/goose.v3/client"
+	"gopkg.in/niedbalski/goose.v3/identity"
+	"gopkg.in/niedbalski/goose.v3/neutron"
 )
 
 func registerOpenStackTests(cred *identity.Credentials) {
